@@ -118,7 +118,7 @@ restore_audio() {
 restore_camera() {
   echo -e "${CYAN}--> Restoring Camera Stack (IPU3 tuning & GStreamer)...${NC}"
   
-  # Restore Camera Color Tuning (Fixes Green Tint)
+  # Restore Camera Color Tuning (Fixes Green Tint for Rear Camera / INT347A)
   sudo mkdir -p /usr/share/libcamera/ipa/ipu3/
   sudo tee /usr/share/libcamera/ipa/ipu3/ov8865.yaml > /dev/null <<INNEREOF
 version: 1
@@ -128,7 +128,9 @@ algorithms:
   - Awb:
   - ToneMapping:
 INNEREOF
-  echo -e "    ${GREEN}[✓] IPU3 color tuning profile written.${NC}"
+  sudo ln -sf /usr/share/libcamera/ipa/ipu3/ov8865.yaml /usr/share/libcamera/ipa/ipu3/INT347A.yaml
+  sudo cp /usr/share/libcamera/ipa/ipu3/ov8865.yaml /usr/share/libcamera/ipa/ipu3/uncalibrated.yaml
+  echo -e "    ${GREEN}[✓] IPU3 color tuning profiles written (ov8865.yaml, INT347A.yaml).${NC}"
 
   # Ensure persistent load on boot
   if [ ! -f /etc/modules-load.d/surface-camera.conf ]; then
