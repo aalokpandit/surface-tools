@@ -6,11 +6,13 @@ export LIBCAMERA_LOG_LEVELS=4
 
 # 1. Initialize the virtual device once
 echo "Initializing Surface Bridge..."
+sudo modprobe dw9719 2>/dev/null || true
 sudo modprobe -r v4l2loopback 2>/dev/null
 sleep 1
 sudo modprobe v4l2loopback devices=1 video_nr=14 card_label="Surface Bridge" exclusive_caps=0
 sleep 1
 v4l2-ctl -d /dev/video14 --set-fmt-video=width=1280,height=720,pixelformat=YUYV
+
 
 # Start in Front Camera mode by default
 CAM_MODE="FRONT"

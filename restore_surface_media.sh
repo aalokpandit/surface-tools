@@ -130,10 +130,11 @@ algorithms:
 INNEREOF
   echo -e "    ${GREEN}[✓] IPU3 color tuning profile written.${NC}"
 
-  # Re-link driver
+  # Re-link driver and load VCM lens driver
+  sudo modprobe dw9719 2>/dev/null || true
   sudo depmod -a
   sudo modprobe v4l2loopback 2>/dev/null || true
-  echo -e "    ${GREEN}[✓] v4l2loopback reloaded.${NC}"
+  echo -e "    ${GREEN}[✓] Camera modules (dw9719, v4l2loopback) loaded.${NC}"
 
   # Refresh GStreamer Plugin Cache
   rm -rf ~/.cache/gstreamer-1.0
