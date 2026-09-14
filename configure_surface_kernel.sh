@@ -13,7 +13,16 @@ fi
 
 echo "[1/4] Ensuring linux-surface and media packages are installed and current..."
 apt-get update
-apt-get install -y linux-image-surface linux-headers-surface iptsd libwacom-surface v4l2loopback-dkms v4l2loopback-utils
+apt-get install -y linux-image-surface linux-headers-surface iptsd libwacom-surface v4l2loopback-utils git build-essential
+
+
+echo "[1b/4] Building and installing compatible v4l2loopback driver..."
+TMP_DIR=$(mktemp -d)
+git clone --depth 1 https://github.com/umlaeute/v4l2loopback.git "$TMP_DIR/v4l2loopback"
+make -C "$TMP_DIR/v4l2loopback"
+make -C "$TMP_DIR/v4l2loopback" install
+depmod -a
+rm -rf "$TMP_DIR"
 
 
 echo "[2/4] Removing Ubuntu generic HWE metapackages..."
