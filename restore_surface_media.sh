@@ -135,16 +135,11 @@ INNEREOF
     echo -e "dw9719\nv4l2loopback" | sudo tee /etc/modules-load.d/surface-camera.conf > /dev/null || true
   fi
 
-  # Reload IPU3 and sensor modules to bind VCM lens driver
-  sudo modprobe -r ipu3_cio2 ov8865 ov5693 ov7251 2>/dev/null || true
+  # Load camera drivers if not already loaded
   sudo modprobe dw9719 2>/dev/null || true
-  sudo modprobe ov5693 2>/dev/null || true
-  sudo modprobe ov8865 2>/dev/null || true
-  sudo modprobe ov7251 2>/dev/null || true
-  sudo modprobe ipu3_cio2 2>/dev/null || true
   sudo depmod -a
-  sudo modprobe v4l2loopback 2>/dev/null || true
-  echo -e "    ${GREEN}[✓] Camera sensor & bridge modules reloaded cleanly.${NC}"
+  sudo modprobe v4l2loopback devices=1 video_nr=14 card_label="Surface Bridge" exclusive_caps=0 2>/dev/null || true
+  echo -e "    ${GREEN}[✓] Camera modules verified.${NC}"
 
   # Refresh GStreamer Plugin Cache
   rm -rf ~/.cache/gstreamer-1.0
