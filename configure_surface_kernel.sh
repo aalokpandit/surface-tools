@@ -11,9 +11,10 @@ if [ "$EUID" -ne 0 ]; then
   exit 1
 fi
 
-echo "[1/4] Ensuring linux-surface repository packages are installed and current..."
+echo "[1/4] Ensuring linux-surface and media packages are installed and current..."
 apt-get update
-apt-get install -y linux-image-surface linux-headers-surface iptsd libwacom-surface
+apt-get install -y linux-image-surface linux-headers-surface iptsd libwacom-surface v4l2loopback-dkms v4l2loopback-utils
+
 
 echo "[2/4] Removing Ubuntu generic HWE metapackages..."
 apt-get remove -y \
