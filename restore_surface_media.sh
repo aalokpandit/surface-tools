@@ -140,7 +140,7 @@ INNEREOF
   # Load camera drivers if not already loaded
   sudo modprobe dw9719 2>/dev/null || true
   sudo depmod -a
-  sudo modprobe v4l2loopback devices=1 video_nr=42 card_label="Surface Bridge" exclusive_caps=0 2>/dev/null || true
+  sudo modprobe v4l2loopback devices=1 video_nr=42 card_label="Surface Bridge" exclusive_caps=1 2>/dev/null || true
   echo -e "    ${GREEN}[✓] Camera modules verified (loopback on /dev/video42).${NC}"
 
   # Refresh GStreamer Plugin Cache
