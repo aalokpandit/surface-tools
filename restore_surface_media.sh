@@ -130,15 +130,26 @@ algorithms:
 INNEREOF
   echo -e "    ${GREEN}[✓] IPU3 color tuning profile written.${NC}"
 
-  # Re-link driver and load VCM lens driver
+  # Ensure persistent load on boot
+  if [ ! -f /etc/modules-load.d/surface-camera.conf ]; then
+    echo -e "dw9719\nv4l2loopback" | sudo tee /etc/modules-load.d/surface-camera.conf > /dev/null || true
+  fi
+
+  # Reload IPU3 and sensor modules to bind VCM lens driver
+  sudo modprobe -r ipu3_cio2 ov8865 ov5693 ov7251 2>/dev/null || true
   sudo modprobe dw9719 2>/dev/null || true
+  sudo modprobe ov5693 2>/dev/null || true
+  sudo modprobe ov8865 2>/dev/null || true
+  sudo modprobe ov7251 2>/dev/null || true
+  sudo modprobe ipu3_cio2 2>/dev/null || true
   sudo depmod -a
   sudo modprobe v4l2loopback 2>/dev/null || true
-  echo -e "    ${GREEN}[✓] Camera modules (dw9719, v4l2loopback) loaded.${NC}"
+  echo -e "    ${GREEN}[✓] Camera sensor & bridge modules reloaded cleanly.${NC}"
 
   # Refresh GStreamer Plugin Cache
   rm -rf ~/.cache/gstreamer-1.0
   echo -e "    ${GREEN}[✓] GStreamer cache cleared.${NC}"
+
 }
 
 run_auto() {

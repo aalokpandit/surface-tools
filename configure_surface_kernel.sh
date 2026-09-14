@@ -24,6 +24,11 @@ make -C "$TMP_DIR/v4l2loopback" install
 depmod -a
 rm -rf "$TMP_DIR"
 
+echo "[1c/4] Enabling camera modules to load automatically on boot..."
+mkdir -p /etc/modules-load.d
+echo -e "dw9719\nv4l2loopback" > /etc/modules-load.d/surface-camera.conf
+
+
 
 echo "[2/4] Removing Ubuntu generic HWE metapackages..."
 apt-get remove -y \
