@@ -123,7 +123,7 @@ restore_camera() {
   sudo tee /usr/share/libcamera/ipa/ipu3/ov8865.yaml > /dev/null <<INNEREOF
 version: 1
 algorithms:
-  - BlackLevelCorrection:
+  - Af:
   - Agc:
   - Awb:
   - ToneMapping:
