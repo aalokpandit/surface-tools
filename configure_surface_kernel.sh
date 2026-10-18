@@ -17,7 +17,6 @@ apt-get install -y \
   linux-image-6.18.7-surface-1 \
   linux-headers-6.18.7-surface-1 \
   iptsd \
-  libwacom-surface \
   v4l2loopback-utils \
   git \
   build-essential
