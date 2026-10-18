@@ -47,11 +47,10 @@ apt-get remove -y \
   linux-headers-generic 2>/dev/null || true
 
 echo "[3/4] Purging broken/unused 6.19 and generic 7.0 kernels..."
-apt-get purge -y \
-  linux-image-6.19.8-surface-3 \
-  linux-headers-6.19.8-surface-3 \
-  linux-image-7.0.0-*-generic \
-  linux-headers-7.0.0-*-generic 2>/dev/null || true
+TO_PURGE=$(dpkg -l 'linux-image-7.0.0-*' 'linux-headers-7.0.0-*' 'linux-modules-7.0.0-*' 'linux-image-6.19*' 'linux-headers-6.19*' 2>/dev/null | awk '/^ii/{print $2}')
+if [ -n "$TO_PURGE" ]; then
+  apt-get purge -y $TO_PURGE
+fi
 
 echo "[4/4] Updating GRUB bootloader configuration..."
 update-grub
