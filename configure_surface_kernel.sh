@@ -1,6 +1,9 @@
 #!/bin/bash
 set -e
 
+export DEBIAN_FRONTEND=noninteractive
+export NEEDRESTART_MODE=a
+
 echo "=================================================="
 echo " Surface Pro 4 Kernel & Boot Configuration Tool   "
 echo "=================================================="
@@ -52,6 +55,8 @@ mkdir -p /etc/modules-load.d
 echo -e "dw9719\nv4l2loopback" > /etc/modules-load.d/surface-camera.conf
 
 echo "[4/4] Updating GRUB bootloader configuration..."
+sed -i 's/^GRUB_TIMEOUT_STYLE=.*/GRUB_TIMEOUT_STYLE=menu/' /etc/default/grub 2>/dev/null || true
+sed -i 's/^GRUB_TIMEOUT=0/GRUB_TIMEOUT=3/' /etc/default/grub 2>/dev/null || true
 update-grub
 
 echo "=================================================="
