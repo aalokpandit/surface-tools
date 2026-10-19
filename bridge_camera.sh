@@ -4,14 +4,29 @@
 export GST_DEBUG=0
 export LIBCAMERA_LOG_LEVELS=4
 
+# Guarantee system libcamera and GStreamer plugins take precedence
+export LD_LIBRARY_PATH="/usr/lib/x86_64-linux-gnu:${LD_LIBRARY_PATH}"
+export GST_PLUGIN_SYSTEM_PATH="/usr/lib/x86_64-linux-gnu/gstreamer-1.0:${GST_PLUGIN_SYSTEM_PATH}"
+
+# Cleanup on exit or interrupt
+cleanup() {
+    [ -n "$GST_PID" ] && kill "$GST_PID" 2>/dev/null || true
+    echo ""
+    echo "Surface Bridge stopped."
+    exit 0
+}
+trap cleanup SIGINT SIGTERM EXIT
+
 # 1. Initialize the virtual device once
 echo "Initializing Surface Bridge..."
 sudo modprobe dw9719 2>/dev/null || true
-sudo modprobe -r v4l2loopback 2>/dev/null
-sleep 1
-sudo modprobe v4l2loopback devices=1 video_nr=42 card_label="Surface Bridge" exclusive_caps=0
-sleep 1
-v4l2-ctl -d /dev/video42 --set-fmt-video=width=1280,height=720,pixelformat=YUYV
+if ! lsmod | grep -q "v4l2loopback" || [ ! -e /dev/video42 ]; then
+    sudo modprobe -r v4l2loopback 2>/dev/null || true
+    sleep 0.5
+    sudo modprobe v4l2loopback devices=1 video_nr=42 card_label="Surface Bridge" exclusive_caps=0
+    sleep 0.5
+fi
+v4l2-ctl -d /dev/video42 --set-fmt-video=width=1280,height=720,pixelformat=YUYV 2>/dev/null || true
 
 
 # Start in Front Camera mode by default
@@ -52,9 +67,11 @@ while true; do
         echo "Switching..."
         sleep 1
     elif [ "$user_input" == "q" ]; then
-        kill $GST_PID 2>/dev/null
-        sudo modprobe -r v4l2loopback
+        kill "$GST_PID" 2>/dev/null || true
+        GST_PID=""
+        sudo modprobe -r v4l2loopback 2>/dev/null || true
         echo "Bridge closed. Bye!"
+        trap - SIGINT SIGTERM EXIT
         break
     fi
 done

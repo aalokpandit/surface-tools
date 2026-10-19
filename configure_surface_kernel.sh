@@ -36,7 +36,10 @@ apt-get install -y \
   iptsd \
   v4l2loopback-utils \
   git \
-  build-essential
+  build-essential \
+  libcamera-tools \
+  gstreamer1.0-libcamera \
+  libcamera-ipa
 
 # Prevent auto-upgrading to 6.19 until IPU3 upstream regression is fixed
 apt-mark hold linux-image-6.18.7-surface-1 linux-headers-6.18.7-surface-1 2>/dev/null || true
@@ -53,6 +56,14 @@ rm -rf "$TMP_DIR"
 echo "[3b/4] Enabling camera modules to load automatically on boot..."
 mkdir -p /etc/modules-load.d
 echo -e "dw9719\nv4l2loopback" > /etc/modules-load.d/surface-camera.conf
+
+echo "[3c/4] Cleaning up any stale /usr/local camera libraries and updating linker cache..."
+rm -f /usr/local/lib/x86_64-linux-gnu/libcamera* \
+      /usr/local/lib/x86_64-linux-gnu/gstreamer-1.0/libgstlibcamera.so \
+      /usr/local/lib/x86_64-linux-gnu/pkgconfig/libcamera* \
+      /usr/local/bin/lc-compliance \
+      /usr/local/bin/libcamerify 2>/dev/null || true
+ldconfig
 
 echo "[4/4] Updating GRUB bootloader configuration..."
 sed -i 's/^GRUB_TIMEOUT_STYLE=.*/GRUB_TIMEOUT_STYLE=menu/' /etc/default/grub 2>/dev/null || true

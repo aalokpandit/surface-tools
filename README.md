@@ -34,7 +34,7 @@ sudo reboot
 ---
 
 ### 3. `bridge_camera.sh`
-Toggleable GStreamer bridge for Front/Rear cameras via `v4l2loopback` (`/dev/video14`).
+Toggleable GStreamer bridge for Front/Rear cameras via `v4l2loopback` (`/dev/video42`).
 
 **Usage**:
 ```bash
