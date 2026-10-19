@@ -73,11 +73,10 @@ while true; do
             video/x-raw,width=1280,height=720 ! queue ! videoconvert ! \
             video/x-raw,format=YUY2 ! identity drop-allocation=1 ! queue ! v4l2sink device=/dev/video42 &
     else
-        # Launch Rear Camera in background with Flip
+        # Launch Rear Camera in background
         gst-launch-1.0 -q libcamerasrc camera-name='\\_SB_.PCI0.I2C3.CAMR' ! \
-            video/x-raw,width=1280,height=720 ! queue ! videoflip method=horizontal-flip ! \
-            videoconvert ! video/x-raw,format=YUY2 ! \
-            identity drop-allocation=1 ! queue ! v4l2sink device=/dev/video42 &
+            video/x-raw,width=1280,height=720 ! queue ! videoconvert ! \
+            video/x-raw,format=YUY2 ! identity drop-allocation=1 ! queue ! v4l2sink device=/dev/video42 &
     fi
 
     # Save the Process ID (PID) of GStreamer
